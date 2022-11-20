@@ -1,6 +1,6 @@
 import { fetchImages } from '../js/fetchImages';
 import Notiflix from 'notiflix';
-import SimpleLightbox from 'simplelightbox';
+import SimpleLightbox from 'simplelightbox/dist/simple-lightbox.js';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 let getEL = x => document.querySelector(x);
