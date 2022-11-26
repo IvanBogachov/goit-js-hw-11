@@ -3,9 +3,6 @@ import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import axios from 'axios';
 
-let getEL = x => document.querySelector(x);
-
-const input = getEL('#search-box');
 
 const refs = {
   form: document.querySelector('#search-form'),
