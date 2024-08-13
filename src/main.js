@@ -1,44 +1,56 @@
-const fetchUsersBtn = document.querySelector('.btn');
-const userList = document.querySelector('.gallery');
+import iziToast from 'izitoast';
 
+import { MESSAGES, MESSAGES_BG_COLORS, showInfoMessage } from './js/message-izi.js';
+import { getGalleryData } from './js/paxabay-api.js';
+import { renderGallery } from './js/render-functions.js';
 
-const searchParams = new URLSearchParams({
-    _limit: 9,
-    _sort: "id",
-  });
-const url = `https://jsonplaceholder.typicode.com/photos?${searchParams}`;
+const form = document.querySelector('.search-form');
+const gallery = document.querySelector('.gallery');
+const div = document.createElement('div');
 
-fetchUsersBtn.addEventListener('click', () => {
-  fetchPhotos()
-    .then(photos => renderUsers(photos))
-    .catch(error => console.log(error));
-});
-console.log(url);
-function fetchPhotos() {
-    return fetch(url)
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(response.status);
-      }
-      return response.json();
-    });
+form.addEventListener('submit', onSubmitForm);
+
+async function onSubmitForm(event) {
+  event.preventDefault();
+
+  iziToast.destroy();
+  gallery.innerHTML = '';
+  addLoader();
+
+  const formData = new FormData(event.target);
+  const { search } = Object.fromEntries(formData.entries());
+
+  if (!search.trim()) {
+    showInfoMessage(MESSAGES.info, MESSAGES_BG_COLORS.red);
+    gallery.innerHTML = '';
+    return;
+  }
+
+  try {
+    const galleryData = await getGalleryData(search.trim());
+    if (validateGalleryData(galleryData)) {
+      renderGallery(galleryData, gallery);
+    }
+  } catch (error) {
+    showInfoMessage(MESSAGES.exception + error, MESSAGES_BG_COLORS.orange);
+  }
+
+  event.target.reset();
+}
+function addLoader() {
+  div.classList.add('loader');
+  gallery.append(div);
 }
 
-
-function renderUsers(photos) {
-  const markup = photos
-    .map(photo => {
-      return `
-        <li class="gallery-item">
-        <a class="gallery-link" href="${photo.url}">
-        <img class="gallery-image"
-        src="${photo.thumbnailUrl}"
-        alt="${photo.url}"
-        />
-        </a>
-        </li>
-      `;
-    })
-    .join('');
-  userList.insertAdjacentHTML('beforeend', markup);
+function validateGalleryData(galleryData) {
+  if (!galleryData) {
+    gallery.innerHTML = '';
+    return false;
+  } else if (galleryData && galleryData.totalHits === 0) {
+    showInfoMessage(MESSAGES.warning, MESSAGES_BG_COLORS.red);
+    gallery.innerHTML = '';
+    return false;
+  } else {
+    return true;
+  }
 }
