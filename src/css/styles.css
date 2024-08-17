@@ -104,7 +104,6 @@ button:hover {
   border-bottom: 1px solid #808080;
   border-left: 1px solid #808080;
   border-right: 1px solid #808080;
-  /* height: 48px; */
 }
 .img-content-wrapper {
   padding-block: 4px;
@@ -174,12 +173,13 @@ button:hover {
 }
 
 .loader {
+  display: flex;
+  margin: 0px auto;
   border: 2px solid #FFF;
   width: 48px;
   height: 48px;
   background: #4e75ff;
   border-radius: 50%;
-  display: inline-block;
   position: relative;
   box-sizing: border-box;
   animation: rotation 2s linear infinite;
@@ -204,3 +204,7 @@ button:hover {
     transform: rotate(360deg);
   }
 } 
+
+.is-hidden {
+  display: none;
+}
