@@ -6,7 +6,7 @@ const options = {
 const API_KEY = '45418693-8ae3627eda45814ae2d20cf49';
 const API_URL = 'https://pixabay.com/api/?';
 
-export async function getGalleryData(queryValue) {
+export function getGalleryData(queryValue) {
   try {
     const searchParams = new URLSearchParams({
       key: API_KEY,
@@ -16,12 +16,20 @@ export async function getGalleryData(queryValue) {
       safesearch: true,
     });
 
-    const response = await fetch(API_URL + searchParams, options).then();
-    if (!response.ok) {
-      showInfoMessage(MESSAGES.error, MESSAGES_BG_COLORS.orange);
-      return;
-    }
-    return await response.json();
+    return fetch(API_URL + searchParams, options)
+      .then((response) => {
+        if (!response.ok) {
+          showInfoMessage(MESSAGES.error, MESSAGES_BG_COLORS.orange);
+          return;
+        }
+        return response.json();
+      })
+      .catch((err) => {
+        showInfoMessage(
+          `${MESSAGES.exception} ERROR:  ${err}`,
+          MESSAGES_BG_COLORS.orange
+        );
+      });
   } catch (err) {
     showInfoMessage(
       `${MESSAGES.exception} ERROR:  ${err}`,

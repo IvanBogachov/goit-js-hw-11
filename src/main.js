@@ -10,7 +10,7 @@ const div = document.createElement('div');
 
 form.addEventListener('submit', onSubmitForm);
 
-async function onSubmitForm(event) {
+function onSubmitForm(event) {
   event.preventDefault();
 
   iziToast.destroy();
@@ -26,18 +26,22 @@ async function onSubmitForm(event) {
     return;
   }
 
-  try {
-    const galleryData = await getGalleryData(search.trim());
-    if (validateGalleryData(galleryData)) {
-      renderGallery(galleryData, gallery);
-    }
-  } catch (error) {
-    showInfoMessage(MESSAGES.exception + error, MESSAGES_BG_COLORS.orange);
-  }
-
-  event.target.reset();
+  getGalleryData(search.trim())
+    .then(galleryData => {
+      if (validateGalleryData(galleryData)) {
+        renderGallery(galleryData, gallery);
+      }
+    })
+    .catch(error => {
+      showInfoMessage(MESSAGES.exception + error, MESSAGES_BG_COLORS.orange);
+    })
+    .finally(() => {
+      event.target.reset();
+    });
 }
+
 function addLoader() {
+  const div = document.createElement('div'); // Добавление создания элемента div
   div.classList.add('loader');
   gallery.append(div);
 }
